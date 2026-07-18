@@ -11,16 +11,31 @@ bool DMDserverExists = true;
 // CPU Usage % = (cpuUsedMs / (totalMsPassed * ProcessorCount)) * 100
 double GetCpuUsage(Process process)
 {
-    TimeSpan startCpuTime = process.TotalProcessorTime;
-    DateTime startTime = DateTime.UtcNow;
 
-    Thread.Sleep(1000);
+    TimeSpan startCpuTime = TimeSpan.Zero;
+    DateTime startTime = new DateTime();
 
-    process.Refresh();
+    TimeSpan endCpuTime = TimeSpan.Zero;
+    DateTime endTime = new DateTime();
 
-    TimeSpan endCpuTime = process.TotalProcessorTime;
-    DateTime endTime = DateTime.UtcNow;
+    try
+    {
 
+        startCpuTime = process.TotalProcessorTime;
+        startTime = DateTime.UtcNow;
+
+        Thread.Sleep(1000);
+
+        process.Refresh();
+
+        endCpuTime = process.TotalProcessorTime;
+        endTime = DateTime.UtcNow;
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine("Error : " + e);
+        return 0;
+    }
 
 
     double cpuUsedMs = (endCpuTime - startCpuTime).TotalMilliseconds;
@@ -45,12 +60,20 @@ void ReviewDMD()
         return;
     }
     DMDserverExists = true;
+    Console.ForegroundColor = ConsoleColor.DarkCyan;
+    Console.WriteLine("dmd server is Run.");
+    Console.ResetColor();
     foreach (Process process in getByName)
     {
         using (process)
         {
+            if (process.HasExited) continue;
+
             long workingSetMB = process.WorkingSet64 / (1024 * 1024);
             var getCpuUsage = GetCpuUsage(process);
+
+            if (process.HasExited) continue;
+
             if (workingSetMB > MaxSizeMB)
             {
                 if (getCpuUsage > 10 && workingSetMB < MaxSizeInWorkingTime)
@@ -67,6 +90,7 @@ void ReviewDMD()
             }
         }
     }
+
 
 
 
@@ -103,9 +127,18 @@ Console.WriteLine("enter a number for change max size limit");
 var ChangeMaxSizeLimit = Console.ReadLine();
 if (ChangeMaxSizeLimit != null)
 {
-    if (Convert.ToInt32(ChangeMaxSizeLimit) != 0)
+    try
     {
-        ChangeMaxSize(Convert.ToInt32(ChangeMaxSizeLimit));
+        if (Convert.ToInt32(ChangeMaxSizeLimit) != 0)
+        {
+            ChangeMaxSize(Convert.ToInt32(ChangeMaxSizeLimit));
+        }
+    }
+    catch (Exception e)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("input not valid.");
+        Console.ResetColor();
     }
 }
 
