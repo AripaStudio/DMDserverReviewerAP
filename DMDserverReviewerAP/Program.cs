@@ -54,7 +54,7 @@ async Task<double> GetCpuUsage(Process process)
 
 }
 
-var mb = MaxSizeMB;
+
 
 async Task ReviewDMD()
 {
@@ -65,7 +65,7 @@ async Task ReviewDMD()
 
     int currentLeft = Console.CursorLeft;
     int currentTop = Console.CursorTop;
-
+    var mb = MaxSizeMB;
     if (getByName.Length == 0)
     {
         UserInterfaceManager.DrawHeader(mb, false);
