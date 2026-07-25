@@ -53,6 +53,9 @@ async Task<double> GetCpuUsage(Process process)
 
 
 }
+
+var mb = MaxSizeMB;
+
 async Task ReviewDMD()
 {
 
@@ -65,11 +68,11 @@ async Task ReviewDMD()
 
     if (getByName.Length == 0)
     {
-        UserInterfaceManager.DrawHeader(MaxSizeMB, false);
+        UserInterfaceManager.DrawHeader(mb, false);
         DMDserverExists = false;
         return;
     }
-    UserInterfaceManager.DrawHeader(MaxSizeMB);
+    UserInterfaceManager.DrawHeader(mb);
     DMDserverExists = true;
 
     int index = 0;
@@ -137,7 +140,7 @@ async Task ReviewDMD()
             UserInterfaceManager.Create(process.ProcessName, process.Id, idx, workingSetMB, getCpuUsage);
 
 
-            if (workingSetMB > MaxSizeMB)
+            if (workingSetMB > mb)
             {
                 if (getCpuUsage > 10 && workingSetMB < MaxSizeInWorkingTime)
                 {
@@ -213,7 +216,7 @@ while (true)
     string? a = Console.ReadLine();
 
     Console.SetCursorPosition(2, 20);
-    Console.Write(new string(' ', Console.WindowWidth - 3));
+    Console.Write(new string(' ', Console.WindowWidth - 2));
     if (a == "exit")
     {
         return;

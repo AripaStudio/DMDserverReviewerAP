@@ -5,10 +5,17 @@ namespace DMDserverReviewerAP
 {
     public static class UserInterfaceManager
     {
+
+        private static void ClearLine(int top)
+        {
+            Console.SetCursorPosition(0 , top);
+            Console.Write(new string(' ', Console.WindowWidth));
+        }
         public static void Create(string nameProcess, int processId, int index, long ramUsage, double cpuUsage)
         {
-            int targetLine = 4 + index;
+            int targetLine = 5 + index;
 
+            ClearLine(targetLine);
             Console.SetCursorPosition(0, targetLine);
 
             Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -40,34 +47,59 @@ namespace DMDserverReviewerAP
 
         public static void DrawHeader(long maxLimit, bool IsDMDRun = true)
         {
+            ClearLine(0);
             Console.SetCursorPosition(0, 0);
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("==================================================================");
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            if (!SecurityAdmin.IsAdministrator()) Console.WriteLine("  Please Run Administrate ");
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            if (!IsDMDRun) Console.WriteLine("  DMD not Found! ");
+            ClearLine(1);
+            Console.SetCursorPosition(0, 1);
+            if (!SecurityAdmin.IsAdministrator())
+            {
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                Console.Write("  Please Run Administrate ");
+            }
+            ClearLine(2);
+            Console.SetCursorPosition(0, 2);
+            if (!IsDMDRun)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.Write("  DMD not Found! ");
+            }
+
+            ClearLine(3);
+            Console.SetCursorPosition(0, 3);
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine($"  DMDServer Watchdog Active | Max Limit: {maxLimit} MB"); 
+            Console.Write($"  DMDServer Watchdog Active | Max Limit: {maxLimit} MB");
+
+            ClearLine(4);
+            Console.SetCursorPosition(0, 4);
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.WriteLine("==================================================================");
+            Console.Write("==================================================================");
+
             Console.ResetColor();
         }
 
         public static void DrawFooter(int processCount)
         {
-            Console.SetCursorPosition(0, 7 + processCount);
+            int footerLine = 5 + processCount;
+
+            ClearLine(footerLine);
+            Console.SetCursorPosition(0, footerLine);
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.WriteLine("==================================================================");
+            Console.Write("==================================================================");
+
+            ClearLine(footerLine + 1);
+
             Console.ResetColor();
         }
 
         public static void DrawMessages(string message , ConsoleColor color, int processCount = 1)
         {
-            Console.SetCursorPosition(0, 25 + processCount);
+            int messageLine = 22 + processCount;
+            ClearLine(messageLine);
+            Console.SetCursorPosition(0, messageLine);
             Console.ForegroundColor = color;
-            Console.WriteLine($"Message : {message}");
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.Write($"Message : {message}");
             Console.ResetColor();
 
         }
