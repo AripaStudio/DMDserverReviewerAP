@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Principal;
 
 namespace DMDserverReviewerAP
 {
@@ -37,13 +38,17 @@ namespace DMDserverReviewerAP
             Console.ResetColor();
         }
 
-        public static void DrawHeader(long maxLimit)
+        public static void DrawHeader(long maxLimit, bool IsDMDRun = true)
         {
             Console.SetCursorPosition(0, 0);
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("==================================================================");
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            if (!SecurityAdmin.IsAdministrator()) Console.WriteLine("  Please Run Administrate ");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            if (!IsDMDRun) Console.WriteLine("  DMD not Found! ");
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine($"  DMDServer Watchdog Active | Max Limit: {maxLimit} MB");
+            Console.WriteLine($"  DMDServer Watchdog Active | Max Limit: {maxLimit} MB"); 
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("==================================================================");
             Console.ResetColor();
@@ -51,10 +56,33 @@ namespace DMDserverReviewerAP
 
         public static void DrawFooter(int processCount)
         {
-            Console.SetCursorPosition(0, 4 + processCount);
+            Console.SetCursorPosition(0, 7 + processCount);
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("==================================================================");
             Console.ResetColor();
         }
+
+        public static void DrawMessages(string message , ConsoleColor color, int processCount = 1)
+        {
+            Console.SetCursorPosition(0, 25 + processCount);
+            Console.ForegroundColor = color;
+            Console.WriteLine($"Message : {message}");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.ResetColor();
+
+        }
     }
+
+    public static class SecurityAdmin
+    {
+        public static bool IsAdministrator()
+        {
+            using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
+            {
+                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+        }
+    }
+
 }
